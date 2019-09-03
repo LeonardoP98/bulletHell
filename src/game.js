@@ -1,6 +1,7 @@
 import Player from "/src/player";
 import InputHandler from "/src/input";
 import Bullet from "/src/bullet";
+import Life from "/src/life";
 
 const GAMESTATE = {
   PAUSED: 0,
@@ -16,6 +17,7 @@ export default class game {
     this.gameHeight = gameHeight;
     this.gameObjects = [];
     this.bullets = [];
+    this.lives = [];
     new InputHandler(this);
   }
 
@@ -28,12 +30,16 @@ export default class game {
     this.player = new Player(this);
     this.bullets = [];
     this.addBullet();
+    this.lives = [];
+    this.addLife();
     this.gameObjects = [this.player];
     this.gamestate = GAMESTATE.RUNNING;
   }
 
   draw(ctx) {
-    [...this.gameObjects, ...this.bullets].forEach(object => object.draw(ctx));
+    [...this.gameObjects, ...this.bullets, ...this.lives].forEach(object =>
+      object.draw(ctx)
+    );
 
     if (this.gamestate === GAMESTATE.PAUSED) {
       ctx.rect(0, 0, this.gameWidth, this.gameHeight);
@@ -79,10 +85,11 @@ export default class game {
     )
       return;
 
-    [...this.gameObjects, ...this.bullets].forEach(object =>
+    [...this.gameObjects, ...this.bullets, ...this.lives].forEach(object =>
       object.update(deltaTime)
     );
     this.bullets = this.bullets.filter(bullet => bullet.exist);
+    this.lives = this.lives.filter(life => life.exist);
   }
 
   gameover() {
@@ -96,13 +103,21 @@ export default class game {
     }, 100);
   }
 
+  addLife() {
+    this.lifeStorm = setInterval(() => {
+      this.lives.push(new Life(this));
+    }, 2000);
+  }
+
   togglePause() {
     if (this.gamestate === GAMESTATE.PAUSED) {
       this.gamestate = GAMESTATE.RUNNING;
       this.addBullet();
+      this.addLife();
     } else if (this.gamestate === GAMESTATE.RUNNING) {
       this.gamestate = GAMESTATE.PAUSED;
       clearInterval(this.bulletStorm);
+      clearInterval(this.lifeStorm);
     }
   }
 }

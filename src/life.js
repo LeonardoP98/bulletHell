@@ -1,6 +1,6 @@
 import { detectCollision } from "/src/collisionDetection";
 
-export default class Bullet {
+export default class Life {
   constructor(game) {
     this.game = game;
     this.width = 10;
@@ -20,15 +20,7 @@ export default class Bullet {
   }
 
   draw(ctx) {
-    // ctx.fillStyle =
-    //   "rgb(" +
-    //   Math.floor(Math.random() * 255) +
-    //   "," +
-    //   Math.floor(Math.random() * 255) +
-    //   "," +
-    //   Math.floor(Math.random() * 255) +
-    //   ")";
-    ctx.fillStyle = "#f00";
+    ctx.fillStyle = "#0f0";
     ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
   }
 
@@ -38,10 +30,7 @@ export default class Bullet {
 
     //hit the player
     if (detectCollision(this, this.game.player)) {
-      this.game.player.lives--;
-      if (this.game.player.lives === 0) {
-        this.game.gameover();
-      }
+      this.game.player.lives++;
       this.exist = false;
     }
 
