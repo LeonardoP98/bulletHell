@@ -1,2 +1,0 @@
-# bulletHell
-Created with CodeSandbox
